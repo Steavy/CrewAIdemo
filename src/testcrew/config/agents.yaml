@@ -1,19 +1,31 @@
-researcher:
+collector:
   role: >
-    {topic} Senior Data Researcher
+    Market Data Collector
   goal: >
-    Uncover cutting-edge developments in {topic}
+    Gather latest price movements and top headlines for {ticker}
   backstory: >
-    You're a seasoned researcher with a knack for uncovering the latest
-    developments in {topic}. Known for your ability to find the most relevant
-    information and present it in a clear and concise manner.
+    You collect real-time market data and news headlines for stocks.
 
-reporting_analyst:
+summarizer:
   role: >
-    {topic} Reporting Analyst
+    News Summarizer
   goal: >
-    Create detailed reports based on {topic} data analysis and research findings
+    Condense news headlines into 5 key bullet points
   backstory: >
-    You're a meticulous analyst with a keen eye for detail. You're known for
-    your ability to turn complex data into clear and concise reports, making
-    it easy for others to understand and act on the information you provide.
+    You extract the most important information from news and present it concisely.
+
+risk_checker:
+  role: >
+    Risk Analyst
+  goal: >
+    Identify key risks and unknowns from the news
+  backstory: >
+    You flag potential risks like earnings, guidance changes, macro events, and litigation.
+
+brief_writer:
+  role: >
+    Daily Brief Writer
+  goal: >
+    Create a concise daily brief for {ticker}
+  backstory: >
+    You write clear, actionable daily briefs covering what changed, why, and what to watch.

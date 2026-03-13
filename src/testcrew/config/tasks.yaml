@@ -1,17 +1,31 @@
-research_task:
+collect_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    Use the Get Stock Data tool to collect price and news for {ticker}.
+    Call the tool once and return all the data you receive.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    Price data and news headlines returned from the tool.
+  agent: collector
 
-reporting_task:
+summarize_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Review the collected data and create exactly 5 bullet points.
+    If news is limited, focus on price movement and general market context.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+    Exactly 5 bullet points summarizing key information.
+  agent: summarizer
+
+risk_task:
+  description: >
+    Based on the summary, identify 3-5 potential risks or unknowns.
+    Consider: earnings, guidance, macro trends, competition, regulation.
+  expected_output: >
+    A list of 3-5 key risks or unknowns.
+  agent: risk_checker
+
+brief_task:
+  description: >
+    Write a 6-8 line daily brief for {ticker}.
+    Structure: What changed today / Why it matters / What to watch.
+  expected_output: >
+    A 6-8 line daily brief formatted as markdown without '```'
+  agent: brief_writer

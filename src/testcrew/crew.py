@@ -1,63 +1,58 @@
+from typing import List
+
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
+from testcrew.tools.custom_tool import get_stock_data
+
 
 @CrewBase
-class Testcrew():
-    """Testcrew crew"""
+class ScratchProject():
+    """ScratchProject crew"""
 
-    agents: list[BaseAgent]
-    tasks: list[Task]
-
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
-    @agent
-    def researcher(self) -> Agent:
-        return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True
-        )
+    agents: List[BaseAgent]
+    tasks: List[Task]
 
     @agent
-    def reporting_analyst(self) -> Agent:
-        return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
-            verbose=True
-        )
+    def collector(self) -> Agent:
+        return Agent(config=self.agents_config['collector'], tools=[get_stock_data], verbose=True)
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-    @task
-    def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
-        )
+    @agent
+    def summarizer(self) -> Agent:
+        return Agent(config=self.agents_config['summarizer'], verbose=True)
+
+    @agent
+    def risk_checker(self) -> Agent:
+        return Agent(config=self.agents_config['risk_checker'], verbose=True)
+
+    @agent
+    def brief_writer(self) -> Agent:
+        return Agent(config=self.agents_config['brief_writer'], verbose=True)
 
     @task
-    def reporting_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
-        )
+    def collect_task(self) -> Task:
+        return Task(config = self.tasks_config['collect_task'])
+
+    @task
+    def summarize_task(self) -> Task:
+        return Task(config = self.tasks_config['summarize_task'])
+
+    @task
+    def risk_task(self) -> Task:
+        return Task(config = self.tasks_config['risk_task'])
+
+    @task
+    def brief_task(self) -> Task:
+        return Task(config = self.tasks_config['brief_task'])
 
     @crew
     def crew(self) -> Crew:
-        """Creates the Testcrew crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
+        """Creates the ScratchProject crew"""
 
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,
+            tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )

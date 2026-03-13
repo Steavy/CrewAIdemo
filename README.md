@@ -20,12 +20,14 @@ crewai install
 ```
 ### Customizing
 
-
-
 - Modify `src/testcrew/config/agents.yaml` to define your agents
 - Modify `src/testcrew/config/tasks.yaml` to define your tasks
 - Modify `src/testcrew/crew.py` to add your own logic, tools and specific args
 - Modify `src/testcrew/main.py` to add custom inputs for your agents and tasks
+
+```bash
+uv add yfinance
+```
 
 ## Running the Project
 
