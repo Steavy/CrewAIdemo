@@ -1,0 +1,111 @@
+import os
+from crewai import Agent, Task, Crew
+
+# 1. Configuratie (Fake key en Lokaal Model)
+os.environ["OPENAI_API_KEY"] = "sk-agile-team"
+
+# We definiëren de LLM configuratie één keer voor hergebruik
+# Zorg dat je exact deze modelnaam hebt 'llama3:8b'
+local_llm_config = {
+    "model": "ollama/llama3:8b",
+    "base_url": "http://localhost:11434/v1"
+}
+
+# ==========================================
+# 2. Definieer de Agents (De Crew Members)
+# ==========================================
+
+# Agent 1: De Ontwerper (UI/UX Designer)
+designer = Agent(
+    role='UI/UX Designer',
+    goal='Ontwerp een minimalistische en moderne "Hello World" React website.',
+    backstory='Je bent een expert in gebruikersinterface-ontwerp. Je houdt van strakke layouts, Tailwind CSS en minimalistische esthetiek.',
+    llm=local_llm_config["model"],
+    base_url=local_llm_config["base_url"],
+    allow_delegation=False,
+    verbose=True
+)
+
+# Agent 2: De Ontwikkelaar (React Developer)
+developer = Agent(
+    role='React Developer',
+    goal='Bouw de website in React, gebaseerd op het ontwerp.',
+    backstory='Je bent een senior frontend engineer. Je schrijft schone, efficiënte React (JSX/TSX) code en gebruikt functionele componenten.',
+    llm=local_llm_config["model"],
+    base_url=local_llm_config["base_url"],
+    allow_delegation=False,
+    verbose=True
+)
+
+# Agent 3: De Tester (QA Engineer)
+tester = Agent(
+    role='QA Engineer',
+    goal='Test de opgeleverde React code met Playwright.',
+    backstory='Je bent een expert in geautomatiseerd testen. Je schrijft robuuste Playwright testscripts in TypeScript die controleren op functionaliteit en UI elementen.',
+    llm=local_llm_config["model"],
+    base_url=local_llm_config["base_url"],
+    allow_delegation=False,
+    verbose=True
+)
+
+# ==========================================
+# 3. Definieer de Taken (De Sprint Backlog)
+# ==========================================
+
+# Taak 1: Ontwerp specificatie
+task_design = Task(
+    description=(
+        "Bedenk een ontwerp voor een simpele 'Hello World' React website. "
+        "Beschrijf de layout, het kleurenschema (bijv. light/dark mode), "
+        "en de exacte tekst die op het scherm moet staan. Stel voor welke "
+        "CSS library (bijv. Tailwind) gebruikt moet worden."
+    ),
+    expected_output="Een ontwerpspecificatie document met layout details en styling voorstellen.",
+    agent=designer
+)
+
+# Taak 2: React Code genereren
+task_development = Task(
+    description=(
+        "Bouw de React component(en) gebaseerd op de ontwerpspecificatie van de Designer. "
+        "Schrijf de volledige code voor een `App.js` (of `App.tsx`) bestand. "
+        "Zorg ervoor dat de code schoon is en de 'Hello World' tekst correct weergeeft."
+    ),
+    expected_output="De volledige JSX/TSX code voor de React applicatie.",
+    agent=developer,
+    context=[task_design] # De Developer heeft de output van de Designer nodig
+)
+
+# Taak 3: Playwright Testscript schrijven
+task_testing = Task(
+    description=(
+        "Schrijf een Playwright testscript om de React applicatie te valideren. "
+        "Het script moet controleren of de pagina laadt, of de 'Hello World' tekst "
+        "aanwezig is, en of de basis styling (zoals de achtergrondkleur) klopt. "
+        "Gebruik de opgeleverde React code om te bepalen op welke selectors je moet testen."
+    ),
+    expected_output="Een volledig Playwright testscript in TypeScript.",
+    agent=tester,
+    context=[task_development] # De Tester heeft de code van de Developer nodig
+)
+
+# ==========================================
+# 4. Start de Agile Crew (De Sprint)
+# ==========================================
+
+agile_crew = Crew(
+    agents=[designer, developer, tester],
+    tasks=[task_design, task_development, task_testing],
+    verbose=True, # Laat de gedachten van de agents zien
+    process="sequential" # Cruciaal: Ze werken na elkaar
+)
+
+print("\n--- AGILE SPRINT START: 'HELLO WORLD' IN REACT ---")
+try:
+    result = agile_crew.kickoff()
+    print("\n" + "="*80)
+    print("FINAL SPRINT DELIVERABLE (TEST SCRIPT):")
+    print("\n" + result)
+    print("="*80)
+except Exception as e:
+    print(f"\n❌ Er ging iets mis tijdens de sprint: {e}")
