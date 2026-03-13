@@ -5,9 +5,9 @@ from crewai import Agent, Task, Crew
 os.environ["OPENAI_API_KEY"] = "sk-agile-team"
 
 # We definiëren de LLM configuratie één keer voor hergebruik
-# Zorg dat je exact deze modelnaam hebt 'llama3:8b'
+# Zorg dat je exact deze modelnaam hebt 'llama3'
 local_llm_config = {
-    "model": "ollama/llama3:8b",
+    "model": "ollama/llama3",
     "base_url": "http://localhost:11434/v1"
 }
 
